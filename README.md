@@ -1,6 +1,6 @@
 # 🏥 Q-Gate App (Quantum Quest Health Gate)
 
-A full-stack, offline-first health screening web application designed for early kidney disease risk assessment. Built as an MVP for a Hackathon, this tool streamlines medical clinical workflows, integrates mockup AI image processing, and manages patient referrals efficiently.
+A full-stack health screening web application designed for early kidney disease risk assessment. Built as an MVP for a Hackathon, this tool streamlines medical clinical workflows, integrates mockup AI image processing, and manages patient referrals efficiently.
 
 ## 📑 Table of Contents
 - [About This Project](#about-this-project)
@@ -36,7 +36,7 @@ The work demonstrates proficiency in full-stack web development, RESTful API des
 | Tool | Purpose |
 | :--- | :--- |
 | **Vanilla JavaScript** | Core frontend logic, DOM manipulation, and API integration. |
-| **HTML5 & Tailwind CSS** | Utility-first, responsive user interface design. |
+| **HTML5 & Tailwind CSS (CDN)** | Utility-first, responsive user interface design. |
 | **Node.js & Express.js** | Backend server, routing, and RESTful API endpoints. |
 | **MySQL** | Relational database management. |
 | **Git & GitHub** | Version control and repository hosting. |

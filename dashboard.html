@@ -82,7 +82,6 @@
         patients.forEach(patient => {
           const { riskBadge, actionButton } = evaluateUACRRisk(patient.uacr);
 
-          // เพิ่มปุ่ม 'ลบข้อมูล' ต่อท้ายปุ่ม Action หลัก
           const row = `
             <tr class="hover:bg-slate-50 transition">
               <td class="px-6 py-4 font-medium text-slate-900">#${patient.patient_id}</td>
@@ -93,8 +92,15 @@
               <td class="px-6 py-4">${riskBadge}</td>
               <td class="px-6 py-4 text-center">
                 <div class="flex flex-col gap-2">
+                  <!-- 🌟 ปุ่ม AI Twin (ส่งชื่อและอายุไปหน้าจำลอง) 🌟 -->
+                  <a href="kidney-twin.html?name=${patient.name}&age=${patient.age}&risk=${patient.uacr}" 
+                     class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md shadow-cyan-500/30 transition-all flex justify-center items-center gap-1">
+                     🧬 เปิด AI Twin
+                  </a>
+                  
                   ${actionButton}
-                  <button onclick="deletePatient('${patient.patient_id}')" class="text-red-500 hover:text-red-700 text-xs underline transition">
+                  
+                  <button onclick="deletePatient('${patient.patient_id}')" class="text-red-500 hover:text-red-700 text-xs underline transition mt-1">
                     ลบออกจากคิว
                   </button>
                 </div>

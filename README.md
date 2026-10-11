@@ -13,7 +13,7 @@ A full-stack health screening web application designed for early kidney disease 
 
 ## 💡 About This Project
 
-This repository contains the end-to-end implementation of **Q-Gate**, a screening tool for medical personnel. The system follows a rigorous clinical workflow: **Patient Registration → AI Guided Capture (UACR Risk Assessment) → Actionable Routing via Smart Dashboard**. 
+This repository contains the end-to-end implementation of **Q-Gate**, a screening tool for medical personnel. The system follows a rigorous clinical workflow:   **Patient Registration → Health Screening (UACR & Vitals) → Actionable Routing via Smart Dashboard → AI Kidney Twin Simulation* 
 
 The work demonstrates proficiency in full-stack web development, RESTful API design, relational database integrity (Foreign Keys & Cascading Deletes), and UI/UX design tailored for healthcare professionals.
 
@@ -23,9 +23,10 @@ The work demonstrates proficiency in full-stack web development, RESTful API des
 
 | Feature | Domain | Core Functionality |
 | :--- | :--- | :--- |
-| **📸 AI Guided Capture** | Computer Vision (Mockup) | Validates image quality (Control Spots, Exposure, Blur) before extracting UACR values to prevent false results. |
-| **🧮 Risk Assessment** | Medical Logic | Automatically categorizes UACR risk into A1 (Normal), A2 (Monitor), and A3 (High Risk) based on KDIGO standards. |
-| **📊 Smart Dashboard** | Healthcare Admin | Dynamic patient queue management with CRUD operations, automated color-coding, and referral routing. |
+| **🧬 AI Kidney Twin** | Preventive Healthcare | Generates a digital twin profile comparing the patient's "Chronological Age" with their "Kidney Age" based on current health data. |
+| **🎛️ What-if Simulation** | Interactive UI | Real-time interactive sliders allowing users to simulate how lifestyle changes (reducing sodium/sugar, exercising) immediately impact their future CKD risk. |
+| **🧮 Risk Assessment** | Medical Logic | Automatically categorizes UACR risk into A1 (Normal), A2 (Monitor), and A3 (High Risk) based on medical standards. |
+| **📊 Smart Dashboard** | Healthcare Admin | Dynamic patient queue management with CRUD operations, automated color-coding, and direct links to patient simulations. |
 | **🔒 Data Integrity** | Database Architecture | Relational architecture with strict Foreign Key constraints ensuring zero orphaned records upon patient deletion. |
 
 ---

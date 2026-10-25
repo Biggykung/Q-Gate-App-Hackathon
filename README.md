@@ -1,58 +1,37 @@
-# 🏥 Q-Gate App (Quantum Quest Health Gate)
+# KID-Q Health Screening
 
-A full-stack health screening web application designed for early kidney disease risk assessment. Built as an MVP for a Hackathon, this tool streamlines medical clinical workflows, integrates mockup AI image processing, and manages patient referrals efficiently.
+เว็บแอปคัดกรองสุขภาพเบื้องต้นสำหรับบุคลากรทางการแพทย์ ครอบคลุมการลงทะเบียนผู้ป่วย บันทึกผลตรวจ UACR และติดตามคิวบนแดชบอร์ด
 
-## 📑 Table of Contents
-- [About This Project](#about-this-project)
-- [Key Features Snapshot](#key-features-snapshot)
-- [Technology Stack](#technology-stack)
-- [Getting Started](#getting-started)
-- [Repository Structure](#repository-structure)
+## คุณสมบัติ
 
----
+- ลงทะเบียนผู้ป่วยและบันทึกผลตรวจสุขภาพ
+- จัดหมวดความเสี่ยง UACR เป็น A1, A2 และ A3
+- จัดลำดับและติดตามรายการผู้ป่วยผ่านแดชบอร์ด
+- หน้า Kidney Twin สำหรับทดลองปรับพฤติกรรมด้วยสถานการณ์จำลอง ตัวเลขเป็นตัวอย่างเพื่อการเรียนรู้ ไม่ใช่การพยากรณ์หรือวินิจฉัยทางการแพทย์
+- ใช้ Google Gemini เพื่อสรุปข้อมูลสุขภาพเบื้องต้น
 
-## 💡 About This Project
+## เครื่องมือที่ใช้
 
-This repository contains the end-to-end implementation of **Q-Gate**, a screening tool for medical personnel. The system follows a rigorous clinical workflow:   **Patient Registration → Health Screening (UACR & Vitals) → Actionable Routing via Smart Dashboard → AI Kidney Twin Simulation* 
+- HTML, Tailwind CSS และ JavaScript
+- Node.js, Express และ MySQL
+- Google Gemini API
 
-The work demonstrates proficiency in full-stack web development, RESTful API design, relational database integrity (Foreign Keys & Cascading Deletes), and UI/UX design tailored for healthcare professionals.
+## เริ่มใช้งาน
 
----
+1. ติดตั้ง Node.js และ MySQL
+2. ติดตั้ง dependencies ด้วย `npm install`
+3. ตั้งค่าตัวแปรใน `.env` ตาม `.env.example` หากมี `.env` อยู่แล้ว ให้เก็บ `GEMINI_API_KEY` เดิมไว้และเพิ่มค่าฐานข้อมูล
+4. เตรียมฐานข้อมูล `health_gate` และตารางที่ API ใช้งาน: `patients`, `health_screening` และ `ai_recommendations`
+5. เริ่มระบบด้วย `npm start`
+6. เปิด `http://localhost:9999/` ในเบราว์เซอร์
 
-## 🎯 Key Features Snapshot
+ตัวแปรที่ต้องตั้งใน `.env`: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` และ `GEMINI_API_KEY` ค่าลับไม่ควรใส่ในซอร์สโค้ดหรือ commit ขึ้น Git
 
-| Feature | Domain | Core Functionality |
-| :--- | :--- | :--- |
-| **🧬 AI Kidney Twin** | Preventive Healthcare | Generates a digital twin profile comparing the patient's "Chronological Age" with their "Kidney Age" based on current health data. |
-| **🎛️ What-if Simulation** | Interactive UI | Real-time interactive sliders allowing users to simulate how lifestyle changes (reducing sodium/sugar, exercising) immediately impact their future CKD risk. |
-| **🧮 Risk Assessment** | Medical Logic | Automatically categorizes UACR risk into A1 (Normal), A2 (Monitor), and A3 (High Risk) based on medical standards. |
-| **📊 Smart Dashboard** | Healthcare Admin | Dynamic patient queue management with CRUD operations, automated color-coding, and direct links to patient simulations. |
-| **🔒 Data Integrity** | Database Architecture | Relational architecture with strict Foreign Key constraints ensuring zero orphaned records upon patient deletion. |
+## หน้าหลัก
 
----
+- `index.html` — ลงทะเบียนและบันทึกผลตรวจ
+- `dashboard.html` — แสดงคิวและจัดหมวด UACR
+- `kidney-twin.html` — สถานการณ์จำลองเพื่อการเรียนรู้
+- `server.js` — REST API และการเชื่อมต่อฐานข้อมูล
 
-## 💻 Technology Stack
-
-**Core Languages & Tools**
-| Tool | Purpose |
-| :--- | :--- |
-| **Vanilla JavaScript** | Core frontend logic, DOM manipulation, and API integration. |
-| **HTML5 & Tailwind CSS (CDN)** | Utility-first, responsive user interface design. |
-| **Node.js & Express.js** | Backend server, routing, and RESTful API endpoints. |
-| **MySQL** | Relational database management. |
-| **Git & GitHub** | Version control and repository hosting. |
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-* **Node.js** (v14.0 or higher)
-* **MySQL Server** (Local or Cloud)
-
-### Installation & Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone [https://github.com/Biggykung/Q-Gate-App-Hackathon.git](https://github.com/Biggykung/Q-Gate-App-Hackathon.git)
-   cd Q-Gate-App-Hackathon
+> ระบบนี้เป็นเครื่องมือคัดกรองเบื้องต้น ไม่ใช่เครื่องมือวินิจฉัย การตัดสินใจรักษาควรทำโดยบุคลากรทางการแพทย์และอ้างอิงผลตรวจยืนยัน

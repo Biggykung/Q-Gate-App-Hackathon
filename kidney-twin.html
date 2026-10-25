@@ -4,25 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KID-Q: AI Kidney Twin Simulation</title>
-    <!-- โหลด Tailwind CSS แบบ CDN เพื่อความรวดเร็ว -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* แต่ง Slider ให้ดูล้ำๆ */
-        input[type=range] {
-            accent-color: #06b6d4; /* สี Cyan */
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css?v=2">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans selection:bg-cyan-500 selection:text-white">
+<body class="site-background text-slate-800 min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
 
     <!-- Header -->
-    <nav class="border-b border-slate-700 bg-slate-800/50 p-4 sticky top-0 backdrop-blur-md z-50">
+    <nav class="border-b border-emerald-900 bg-emerald-950/85 p-4 sticky top-0 backdrop-blur-md z-50">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-300 to-teal-200 bg-clip-text text-transparent">
                 KID-Q Ecosystem
             </h1>
-            <!-- เปลี่ยนจาก span เป็นแท็ก a (ลิงก์) พร้อมเพิ่มเอฟเฟกต์ hover -->
-            <a href="dashboard.html" class="px-4 py-1.5 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-semibold border border-cyan-500/30 hover:bg-cyan-500 hover:text-white transition-all cursor-pointer shadow-md hover:shadow-cyan-500/50 flex items-center gap-2">
+            <a href="dashboard.html" class="px-4 py-1.5 bg-white/10 text-emerald-100 rounded-full text-sm font-semibold border border-white/20 hover:bg-emerald-700 hover:text-white transition cursor-pointer flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 กลับสู่ Dashboard
             </a>
@@ -30,98 +23,84 @@
     </nav>
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto p-6 mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        <!-- ฝั่งซ้าย: AI Kidney Twin Profile -->
-        <section class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl relative overflow-hidden">
-            <!-- เอฟเฟกต์แสงพื้นหลัง -->
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl"></div>
+        <section class="surface-soft rounded-3xl p-8 border border-soft shadow-sm relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-100 rounded-full blur-3xl"></div>
             
-            <h2 class="text-xl font-semibold text-slate-300 mb-6 flex items-center gap-2">
-                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <h2 class="text-xl font-semibold text-slate-700 mb-6 flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 Digital Twin Profile
             </h2>
             
             <div class="flex items-center gap-6 mb-8">
-                <div class="w-20 h-20 bg-slate-700 rounded-full flex items-center justify-center text-3xl border-2 border-slate-600">
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-3xl border-2 border-emerald-100">
                     👨🏽
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold" id="patient-name">นาย สมมติ รักษาดี</h3>
-                    <p class="text-slate-400">อายุจริง: <span id="patient-age">45</span> ปี | ผู้ป่วยเบาหวานระยะเริ่มต้น</p>
+                    <p class="text-slate-400">อายุจริง: <span id="patient-age">45</span> ปี | สถานการณ์จำลอง</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                    <p class="text-sm text-slate-400 mb-1">อายุไตปัจจุบัน (Kidney Age)</p>
-                    <p class="text-4xl font-bold text-red-400" id="kidney-age-display">58 <span class="text-lg text-slate-500 font-normal">ปี</span></p>
+                <div class="result-card p-4 rounded-2xl">
+                    <p class="text-sm text-slate-400 mb-1">อายุไตจำลอง (เพื่อการเรียนรู้)</p>
+                    <p class="text-4xl font-bold text-rose-700" id="kidney-age-display">58 <span class="text-lg text-slate-500 font-normal">ปี</span></p>
                 </div>
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                    <p class="text-sm text-slate-400 mb-1">ความเสี่ยงไตเสื่อม (24 เดือน)</p>
-                    <p class="text-4xl font-bold text-red-400" id="risk-display">42<span class="text-lg text-slate-500 font-normal">%</span></p>
+                <div class="result-card result-card--emphasis p-4 rounded-2xl">
+                    <p class="text-sm text-slate-500 mb-1">คะแนนจำลองจากหมวด UACR</p>
+                    <p class="text-4xl font-bold text-rose-700" id="score-display">42<span class="text-lg text-slate-500 font-normal"> คะแนน</span></p>
                 </div>
             </div>
 
-            <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl" id="status-box">
-                <p class="font-semibold text-red-400">🚨 สถานะปัจจุบัน: Early Damage</p>
-                <p class="text-sm text-slate-300 mt-1" id="status-text">พบความเสียหายระยะเริ่มต้น หากใช้ชีวิตแบบเดิม ความเสี่ยงที่จะเข้าสู่ภาวะไตวาย (CKD) อยู่ในเกณฑ์สูงมาก</p>
+            <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl" id="status-box">
+                <p class="font-semibold text-rose-700">สถานะจำลอง: ควรติดตามผล</p>
+                <p class="text-sm text-slate-600 mt-1" id="status-text">สถานะนี้เป็นเพียงตัวอย่างจากแบบจำลอง ไม่สามารถใช้แทนผลตรวจหรือความเห็นแพทย์ได้</p>
             </div>
         </section>
-
-        <!-- ฝั่งขวา: What-if Simulation -->
-        <section class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl">
-            <h2 class="text-xl font-semibold text-cyan-400 mb-2">What-if Simulation</h2>
-            <p class="text-sm text-slate-400 mb-8">AI จะจำลองอนาคตของไตคุณ หากคุณปรับเปลี่ยนพฤติกรรมตั้งแต่วันนี้</p>
-
-            <!-- Slider 1: ลดโซเดียม -->
+        <section class="surface-soft rounded-3xl p-8 border border-soft shadow-sm">
+            <h2 class="text-xl font-semibold text-emerald-600 mb-2">สถานการณ์จำลองเพื่อการเรียนรู้</h2>
+            <p class="text-sm text-slate-500 mb-4">ปรับแถบเลื่อนเพื่อดูตัวอย่างผลจากการเปลี่ยนพฤติกรรม</p><p class="mb-8 rounded-lg bg-emerald-50 px-3 py-2 text-xs leading-relaxed text-emerald-800">ตัวเลขเป็นแบบจำลองเพื่อการเรียนรู้ ไม่ใช่การพยากรณ์หรือคำวินิจฉัยทางการแพทย์</p>
             <div class="mb-8">
                 <div class="flex justify-between mb-2">
-                    <label class="font-medium text-slate-200">🧂 ลดการกินเค็ม (โซเดียม)</label>
-                    <span id="sodium-val" class="text-cyan-400 font-bold">0%</span>
+                    <label class="font-medium text-slate-700">🧂 ลดการกินเค็ม (โซเดียม)</label>
+                    <span id="sodium-val" class="text-emerald-600 font-bold">0%</span>
                 </div>
-                <input type="range" id="sodium-slider" min="0" max="100" value="0" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                <input type="range" id="sodium-slider" min="0" max="100" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
                 <div class="flex justify-between text-xs text-slate-500 mt-1">
                     <span>เท่าเดิม</span>
                     <span>ลดลง 100%</span>
                 </div>
             </div>
-
-            <!-- Slider 2: ลดน้ำตาล -->
             <div class="mb-8">
                 <div class="flex justify-between mb-2">
-                    <label class="font-medium text-slate-200">🧁 ลดการกินหวาน (คุมน้ำตาล)</label>
-                    <span id="sugar-val" class="text-cyan-400 font-bold">0%</span>
+                    <label class="font-medium text-slate-700">🧁 ลดการกินหวาน (คุมน้ำตาล)</label>
+                    <span id="sugar-val" class="text-emerald-600 font-bold">0%</span>
                 </div>
-                <input type="range" id="sugar-slider" min="0" max="100" value="0" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                <input type="range" id="sugar-slider" min="0" max="100" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
                 <div class="flex justify-between text-xs text-slate-500 mt-1">
                     <span>เท่าเดิม</span>
                     <span>ลดลง 100%</span>
                 </div>
             </div>
-
-            <!-- Slider 3: ออกกำลังกาย -->
             <div class="mb-8">
                 <div class="flex justify-between mb-2">
-                    <label class="font-medium text-slate-200">🏃‍♂️ ออกกำลังกายเพิ่ม</label>
-                    <span id="exercise-val" class="text-cyan-400 font-bold">0 วัน/สัปดาห์</span>
+                    <label class="font-medium text-slate-700">🏃‍♂️ ออกกำลังกายเพิ่ม</label>
+                    <span id="exercise-val" class="text-emerald-600 font-bold">0 วัน/สัปดาห์</span>
                 </div>
-                <!-- เพิ่ม max เป็น 7 และใส่ step="1" -->
-                <input type="range" id="exercise-slider" min="0" max="7" step="1" value="0" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                <input type="range" id="exercise-slider" min="0" max="7" step="1" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
                 <div class="flex justify-between text-xs text-slate-500 mt-1">
                     <span>เท่าเดิม</span>
                     <span>ทุกวัน (7 วัน)</span>
                 </div>
             </div>
-
-            <!-- โค้ช AI แนะนำ -->
-            <div class="mt-8 pt-6 border-t border-slate-700">
+            <div class="mt-8 pt-6 border-t border-soft">
                 <div class="flex gap-4">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/50 flex-shrink-0">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 flex-shrink-0">
                         🤖
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-blue-400">AI Health Coach Suggestion:</h4>
-                        <p class="text-sm text-slate-300 mt-1" id="coach-message">
+                        <h4 class="text-sm font-bold text-emerald-700">คำแนะนำเพื่อสุขภาพ</h4>
+                        <p class="text-sm text-slate-600 mt-1" id="coach-message">
                             "ลองขยับแถบเลื่อนด้านบนเพื่อดูว่า ถ้าคุณลดเค็มและลดหวาน อนาคตของไตคุณจะดีขึ้นแค่ไหน"
                         </p>
                     </div>
@@ -129,27 +108,19 @@
             </div>
         </section>
     </main>
-
-    <!-- Javascript ควบคุมลอจิก AI จำลอง -->
     <script>
-
-        // --- ระบบรับข้อมูลจาก URL ---
         const urlParams = new URLSearchParams(window.location.search);
-
-        // ดึงค่าจาก URL (ถ้าไม่มีให้ใช้ค่าตั้งต้น)
         const pName = urlParams.get('name') || 'นาย สมมติ รักษาดี';
-        const pAge = parseInt(urlParams.get('age')) || 45;
-        const pRisk = parseInt(urlParams.get('risk')) || 42;
-
-        // คำนวณอายุไตหลอกๆ ให้ดูน่ากลัว (เช่น อายุจริง + 13 ปี)
+        const ageParam = Number(urlParams.get('age'));
+        const pAge = Number.isInteger(ageParam) && ageParam > 0 ? ageParam : 45;
+        const uacrParam = urlParams.get('uacr');
+        const uacr = uacrParam === null ? Number.NaN : Number(uacrParam);
+        const hasUacr = Number.isFinite(uacr) && uacr >= 0;
+        const pRisk = hasUacr ? (uacr < 30 ? 15 : uacr <= 300 ? 42 : 72) : 42;
         let BASE_KIDNEY_AGE = pAge + 13; 
         let BASE_RISK = pRisk;
-
-        // เอาข้อมูลไปแสดงบนหน้าเว็บ
         document.getElementById('patient-name').innerText = pName;
         document.getElementById('patient-age').innerText = pAge; 
-
-        // ดึง Element จากหน้าเว็บมาเตรียมไว้
         const sodiumSlider = document.getElementById('sodium-slider');
         const sugarSlider = document.getElementById('sugar-slider');
         const exerciseSlider = document.getElementById('exercise-slider');
@@ -159,91 +130,63 @@
         const valExercise = document.getElementById('exercise-val');
 
         const displayKidneyAge = document.getElementById('kidney-age-display');
-        const displayRisk = document.getElementById('risk-display');
+        const displayRisk = document.getElementById('score-display');
         
         const statusBox = document.getElementById('status-box');
         const statusText = document.getElementById('status-text');
         const coachMessage = document.getElementById('coach-message');
-
-        // ฟังก์ชันคำนวณและอัปเดตหน้าจอ
         function updateSimulation() {
-            // 1. อ่านค่าจาก Slider ปัจจุบัน
-            let sodiumReduction = parseInt(sodiumSlider.value); // 0 ถึง 50
-            let sugarReduction = parseInt(sugarSlider.value); // 0 ถึง 50
-            let exerciseDays = parseInt(exerciseSlider.value); // 0 ถึง 5
-
-            // อัปเดตตัวเลขบน Slider ให้คนดูเห็น
+            let sodiumReduction = parseInt(sodiumSlider.value);
+            let sugarReduction = parseInt(sugarSlider.value);
+            let exerciseDays = parseInt(exerciseSlider.value);
             valSodium.innerText = sodiumReduction + "%";
             valSugar.innerText = sugarReduction + "%";
             valExercise.innerText = exerciseDays + " วัน/สัปดาห์";
-
-            /// 2. ลอจิกจำลองทางการแพทย์ (ปรับสมการใหม่ให้ลดโหดขึ้น!)
-            // ปรับตัวคูณความเสี่ยง: 
-            // ลดเค็ม 10% = ลด 4% | ลดหวาน 10% = ลด 3.5% | ออกกำลัง 1 วัน = ลด 2.5%
-            // เลื่อนสุดหลอดจะลดความเสี่ยงได้สูงสุดถึง ~92.5% !!
             let reducedRisk = (sodiumReduction / 10 * 4.0) + (sugarReduction / 10 * 3.5) + (exerciseDays * 2.5);
             let newRisk = BASE_RISK - reducedRisk;
-            
-            // ป้องกันความเสี่ยงติดลบ (ถ้าทำดีจัดๆ ให้เหลือสัก 5%)
             if (newRisk < 5) newRisk = 5.2;
-
-            // ปรับตัวคูณอายุไต:
-            // ลดเค็ม 10% = ลด 1.5 ปี | ลดหวาน 10% = ลด 1 ปี | ออกกำลัง 1 วัน = ลด 0.8 ปี
             let improvedAge = (sodiumReduction / 10 * 1.5) + (sugarReduction / 10 * 1.0) + (exerciseDays * 0.8);
             let newKidneyAge = BASE_KIDNEY_AGE - improvedAge;
-
-            // ป้องกันอายุไตลดจนน้อยกว่าอายุจริงเว่อร์เกินไป (ให้ต่ำสุดคือน้อยกว่าอายุจริง 2 ปี)
             if (newKidneyAge < pAge - 2) newKidneyAge = pAge - 2.5;
-
-            // 3. แสดงผลตัวเลขที่คำนวณได้
             displayKidneyAge.innerHTML = `${newKidneyAge.toFixed(1)} <span class="text-lg text-slate-500 font-normal">ปี</span>`;
-            displayRisk.innerHTML = `${newRisk.toFixed(1)}<span class="text-lg text-slate-500 font-normal">%</span>`;
-
-            // 4. เปลี่ยนสีและสถานะเตือน (Gamification)
+            displayRisk.innerHTML = `${newRisk.toFixed(1)}<span class="text-lg text-slate-500 font-normal"> คะแนน</span>`;
             if (newRisk <= 20) {
-                // สถานะ: ปลอดภัย (สีเขียว)
-                displayKidneyAge.className = "text-4xl font-bold text-green-400";
-                displayRisk.className = "text-4xl font-bold text-green-400";
+                displayKidneyAge.className = "text-4xl font-bold text-emerald-700";
+                displayRisk.className = "text-4xl font-bold text-emerald-700";
                 
-                statusBox.className = "bg-green-500/10 border border-green-500/30 p-4 rounded-xl transition-all duration-500";
-                statusBox.querySelector('p').innerText = "✅ สถานะ: Safe & Protected";
-                statusBox.querySelector('p').className = "font-semibold text-green-400";
-                statusText.innerText = "เยี่ยมมาก! พฤติกรรมใหม่ของคุณช่วยชะลอความเสื่อมของไตได้อย่างยอดเยี่ยม อายุไตของคุณใกล้เคียงอายุจริงแล้ว";
+                statusBox.className = "bg-emerald-50 border border-emerald-200 p-4 rounded-xl transition-all duration-500";
+                statusBox.querySelector('p').innerText = "คะแนนจำลอง: ต่ำ";
+                statusBox.querySelector('p').className = "font-semibold text-emerald-700";
+                statusText.innerText = "คะแนนจำลองลดลงตามค่าที่เลือก ตัวเลขนี้ไม่ใช่ผลคาดการณ์สุขภาพจริง";
                 
-                coachMessage.innerText = '"ทำได้ดีมากครับ! รักษาวินัยแบบนี้ต่อไป คุณจะหลีกเลี่ยงการล้างไตในอนาคตได้อย่างแน่นอน"';
+                coachMessage.innerText = '"ทำได้ดีมากครับ รักษาพฤติกรรมสุขภาพที่เหมาะสมและปรึกษาบุคลากรทางการแพทย์ตามนัด"';
             } 
             else if (newRisk <= 35) {
-                // สถานะ: ระวัง (สีเหลือง)
-                displayKidneyAge.className = "text-4xl font-bold text-yellow-400";
-                displayRisk.className = "text-4xl font-bold text-yellow-400";
+                displayKidneyAge.className = "text-4xl font-bold text-amber-700";
+                displayRisk.className = "text-4xl font-bold text-amber-700";
                 
-                statusBox.className = "bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-xl transition-all duration-500";
-                statusBox.querySelector('p').innerText = "⚠️ สถานะ: Monitoring (มีพัฒนาการ)";
-                statusBox.querySelector('p').className = "font-semibold text-yellow-400";
-                statusText.innerText = "ดีขึ้นแล้ว! แต่คุณยังสามารถปรับพฤติกรรมเพิ่มได้อีกนิด เพื่อลดความเสี่ยงให้อยู่ในเกณฑ์ปลอดภัย";
+                statusBox.className = "bg-amber-50 border border-amber-200 p-4 rounded-xl transition-all duration-500";
+                statusBox.querySelector('p').innerText = "คะแนนจำลอง: ปานกลาง";
+                statusBox.querySelector('p').className = "font-semibold text-amber-700";
+                statusText.innerText = "ค่าคะแนนเปลี่ยนตามตัวเลือก แบบจำลองนี้ไม่ใช่การประเมินความเสี่ยงทางการแพทย์";
                 
-                coachMessage.innerText = '"ลองเพิ่มการออกกำลังกายอีกนิด หรือลดความเค็มลงอีกหน่อยดูสิครับ ตัวเลขจะดีขึ้นอีกเยอะเลย"';
+                coachMessage.innerText = '"ลองปรับพฤติกรรมทีละน้อย และปรึกษาบุคลากรทางการแพทย์เพื่อวางแผนที่เหมาะกับคุณ"';
             } 
             else {
-                // สถานะ: อันตราย (สีแดง)
-                displayKidneyAge.className = "text-4xl font-bold text-red-400";
-                displayRisk.className = "text-4xl font-bold text-red-400";
+                displayKidneyAge.className = "text-4xl font-bold text-rose-700";
+                displayRisk.className = "text-4xl font-bold text-rose-700";
                 
-                statusBox.className = "bg-red-500/10 border border-red-500/30 p-4 rounded-xl transition-all duration-500";
-                statusBox.querySelector('p').innerText = "🚨 สถานะ: Early Damage";
-                statusBox.querySelector('p').className = "font-semibold text-red-400";
-                statusText.innerText = "พบความเสียหายระยะเริ่มต้น หากใช้ชีวิตแบบเดิม ความเสี่ยงที่จะเข้าสู่ภาวะไตวาย (CKD) อยู่ในเกณฑ์สูงมาก";
+                statusBox.className = "bg-rose-50 border border-rose-200 p-4 rounded-xl transition-all duration-500";
+                statusBox.querySelector('p').innerText = "คะแนนจำลอง: สูง";
+                statusBox.querySelector('p').className = "font-semibold text-rose-700";
+                statusText.innerText = "สถานะนี้เป็นเพียงตัวอย่างจากแบบจำลอง ไม่สามารถใช้แทนผลตรวจหรือความเห็นแพทย์ได้";
                 
-                coachMessage.innerText = '"คุณมีความเสี่ยงสูงมาก ลองขยับแถบเลื่อนด้านบนเพื่อดูว่า ถ้าคุณลดเค็มและลดหวาน อนาคตของไตคุณจะดีขึ้นแค่ไหน"';
+                coachMessage.innerText = '"ข้อมูลนี้เป็นเพียงตัวอย่างเพื่อการเรียนรู้ โปรดปรึกษาบุคลากรทางการแพทย์เกี่ยวกับผลตรวจจริง"';
             }
         }
-
-        // จับตาดูการขยับ Slider ทุกตัว ถ้ามีการขยับ ให้เรียกฟังก์ชันคำนวณทันที
         sodiumSlider.addEventListener('input', updateSimulation);
         sugarSlider.addEventListener('input', updateSimulation);
         exerciseSlider.addEventListener('input', updateSimulation);
-
-        // 🌟 เพิ่มบรรทัดนี้ลงไป เพื่อบังคับให้มันคำนวณทันทีที่โหลดหน้าเว็บเสร็จ 🌟
         updateSimulation();
 
     </script>

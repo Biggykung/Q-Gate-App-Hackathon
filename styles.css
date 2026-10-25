@@ -1,0 +1,36 @@
+.site-background {
+  min-height: 100vh;
+  background-color: #08130f;
+  background-image:
+    radial-gradient(ellipse at 12% 8%, rgb(16 185 129 / 18%), transparent 38%),
+    radial-gradient(ellipse at 90% 18%, rgb(45 212 191 / 12%), transparent 34%),
+    radial-gradient(ellipse at 55% 100%, rgb(34 197 94 / 10%), transparent 46%),
+    linear-gradient(140deg, #07110d 0%, #10251d 48%, #09130f 100%);
+  background-attachment: fixed;
+}
+
+.result-card {
+  background-color: #e7f0e9;
+  border: 1px solid #c6d6cb;
+}
+
+.result-card--emphasis {
+  border-color: #5f9b78;
+}
+
+.surface-soft {
+  background-color: #e7f0e9;
+}
+
+.form-field {
+  background-color: #e7f0e9;
+  border-color: #bdcfc2;
+}
+
+.border-soft {
+  border-color: #c6d6cb;
+}
+
+.border-field {
+  border-color: #bdcfc2;
+}

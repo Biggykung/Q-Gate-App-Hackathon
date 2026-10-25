@@ -3,146 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Referral Dashboard - Quantum Quest</title>
+  <meta name="theme-color" content="#064e3b">
+  <title>Referral Dashboard | KID-Q</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
-<body class="bg-slate-50 min-h-screen p-6 text-slate-800">
-  <div class="max-w-6xl mx-auto space-y-6">
-    
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white p-6 rounded-2xl shadow-md flex justify-between items-center">
+<body class="min-h-screen site-background p-4 text-slate-800 sm:p-6">
+  <main class="mx-auto max-w-6xl space-y-6">
+    <header class="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 p-6 text-white shadow-sm sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight">Referral Queue Dashboard</h1>
-        <p class="text-indigo-100 text-sm mt-1">กระดานจัดการคิวส่งต่อผู้ป่วยความเสี่ยงสูง (จัดหมวด A1-A3)</p>
+        <p class="text-sm font-medium text-emerald-100">KID-Q · HEALTH SCREENING</p>
+        <h1 class="mt-1 text-2xl font-bold tracking-tight">คิวติดตามผลตรวจ</h1>
+        <p class="mt-1 text-sm text-emerald-100">จัดลำดับและติดตามผู้ป่วยตามค่า UACR</p>
       </div>
-      <a href="index.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition">
-        + คัดกรองเคสใหม่
-      </a>
+      <a href="index.html" class="inline-flex items-center justify-center rounded-lg surface-soft px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50">+ คัดกรองเคสใหม่</a>
     </header>
 
-    <!-- Table Section -->
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <section class="overflow-hidden rounded-2xl border border-soft surface-soft shadow-sm" aria-labelledby="queue-heading">
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h2 id="queue-heading" class="font-semibold text-slate-800">รายการผู้ป่วย</h2>
+        <p class="mt-1 text-sm text-slate-500">เรียงจากค่า UACR สูงไปต่ำ</p>
+      </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-slate-600">
-          <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+        <table class="w-full min-w-[900px] text-left text-sm text-slate-600">
+          <thead class="border-b border-soft bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
-              <th class="px-6 py-4">รหัสคนไข้</th>
-              <th class="px-6 py-4">ชื่อ-นามสกุล</th>
-              <th class="px-6 py-4">ระดับน้ำตาล (mg/dL)</th>
-              <th class="px-6 py-4">ความดันโลหิต</th>
-              <th class="px-6 py-4">ค่า UACR (mg/g)</th>
-              <th class="px-6 py-4">การจัดหมวดความเสี่ยงไต</th>
-              <th class="px-6 py-4 text-center">การจัดการ</th>
+              <th scope="col" class="px-5 py-4">รหัสคนไข้</th>
+              <th scope="col" class="px-5 py-4">ชื่อ-นามสกุล</th>
+              <th scope="col" class="px-5 py-4">น้ำตาล (mg/dL)</th>
+              <th scope="col" class="px-5 py-4">ความดันโลหิต</th>
+              <th scope="col" class="px-5 py-4">UACR (mg/g)</th>
+              <th scope="col" class="px-5 py-4">ระดับความเสี่ยง</th>
+              <th scope="col" class="px-5 py-4 text-center">การจัดการ</th>
             </tr>
           </thead>
           <tbody id="queueTableBody" class="divide-y divide-slate-100">
-            <!-- ข้อมูลจาก Database จะมาแสดงตรงนี้ผ่าน JavaScript -->
-            <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-slate-400">กำลังโหลดข้อมูล...</td>
-            </tr>
+            <tr><td colspan="7" class="px-5 py-10 text-center text-slate-500" role="status">กำลังโหลดข้อมูล...</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- คำเตือน Screening Tool (สำคัญมากสำหรับโจทย์) -->
-    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3 text-amber-800 text-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-      </svg>
-      <div>
-        <strong class="font-semibold block mb-1">DISCLAIMER (ข้อควรระวัง):</strong>
-        ระบบ Q-Gate App เป็นเพียงเครื่องมือคัดกรองความเสี่ยงเบื้องต้น (Screening Tool) เท่านั้น ไม่ใช่อุปกรณ์หรือแอปพลิเคชันสำหรับวินิจฉัยโรคทางการแพทย์ (Diagnostic Tool) การตัดสินใจทางการรักษาทั้งหมดต้องทำโดยแพทย์ผู้เชี่ยวชาญและผลการตรวจยืนยันจากห้องปฏิบัติการ
-      </div>
-    </div>
+    <aside class="flex gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-950">
+      <span aria-hidden="true" class="mt-0.5 shrink-0 text-emerald-600">ⓘ</span>
+      <p><strong class="font-semibold">ข้อควรทราบ:</strong> ระบบนี้ใช้คัดกรองความเสี่ยงเบื้องต้น ไม่ใช่เครื่องมือวินิจฉัย การตัดสินใจรักษาควรทำโดยแพทย์ร่วมกับผลตรวจยืนยันจากห้องปฏิบัติการ</p>
+    </aside>
+  </main>
 
-  </div>
-
-  <!-- 1. ดึงไฟล์ utils.js เข้ามาใช้งาน (ต้องวางไว้ก่อนสคริปต์หลัก) -->
   <script src="utils.js"></script>
-
-  <!-- 2. สคริปต์หลักของหน้า Dashboard -->
   <script>
     const API_BASE = 'http://localhost:9999/api';
+    const tbody = document.getElementById('queueTableBody');
 
-    // ฟังก์ชันโหลดคิว
+    function createCell(value, className = 'px-5 py-4') {
+      const cell = document.createElement('td');
+      cell.className = className;
+      cell.textContent = value ?? '—';
+      return cell;
+    }
+
+    function renderPatient(patient) {
+      const row = document.createElement('tr');
+      row.className = 'transition hover:bg-slate-50';
+      row.append(createCell(`#${patient.patient_id}`, 'px-5 py-4 font-semibold text-slate-900'));
+
+      const nameCell = document.createElement('td');
+      nameCell.className = 'px-5 py-4';
+      const name = document.createElement('span');
+      name.className = 'font-medium text-slate-800';
+      name.textContent = patient.name || 'ไม่ระบุชื่อ';
+      const age = document.createElement('span');
+      age.className = 'mt-1 block text-xs text-slate-500';
+      age.textContent = `อายุ ${patient.age ?? '—'} ปี`;
+      nameCell.append(name, age);
+      row.append(nameCell);
+
+      row.append(createCell(patient.blood_sugar), createCell(patient.blood_pressure), createCell(patient.uacr, 'px-5 py-4 font-semibold text-slate-700'));
+      const riskCell = document.createElement('td');
+      riskCell.className = 'px-5 py-4';
+      riskCell.innerHTML = evaluateUACRRisk(patient.uacr).riskBadge;
+      row.append(riskCell);
+
+      const actionCell = document.createElement('td');
+      actionCell.className = 'px-5 py-4';
+      const actions = document.createElement('div');
+      actions.className = 'mx-auto flex max-w-48 flex-col gap-2';
+      const twinLink = document.createElement('a');
+      const query = new URLSearchParams({ name: patient.name || '', age: patient.age ?? '', uacr: patient.uacr ?? '' });
+      twinLink.href = `kidney-twin.html?${query.toString()}`;
+      twinLink.className = 'rounded-lg bg-emerald-600 px-3 py-2 text-center text-sm font-medium text-white transition hover:bg-emerald-700';
+      twinLink.textContent = 'เปิด Kidney Twin';
+      const riskActions = document.createElement('div');
+      riskActions.innerHTML = evaluateUACRRisk(patient.uacr).actionButton;
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'rounded-lg px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-50';
+      deleteButton.textContent = 'ลบข้อมูล';
+      deleteButton.addEventListener('click', () => deletePatient(patient.patient_id));
+      actions.append(twinLink, riskActions, deleteButton);
+      actionCell.append(actions);
+      row.append(actionCell);
+      return row;
+    }
+
     async function loadQueue() {
-      try {
-        const res = await fetch(`${API_BASE}/patients-queue`);
-        const patients = await res.json();
-        
-        const tbody = document.getElementById('queueTableBody');
-        tbody.innerHTML = ''; 
+      tbody.replaceChildren();
+      const loading = createCell('กำลังโหลดข้อมูล...', 'px-5 py-10 text-center text-slate-500');
+      loading.colSpan = 7;
+      loading.setAttribute('role', 'status');
+      const loadingRow = document.createElement('tr');
+      loadingRow.append(loading);
+      tbody.append(loadingRow);
 
-        if (patients.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">ยังไม่มีข้อมูลคนไข้ในระบบ</td></tr>';
+      try {
+        const response = await fetch(`${API_BASE}/patients-queue`);
+        if (!response.ok) throw new Error('โหลดรายการผู้ป่วยไม่สำเร็จ');
+        const patients = await response.json();
+        tbody.replaceChildren();
+        if (!Array.isArray(patients) || patients.length === 0) {
+          const empty = createCell('ยังไม่มีข้อมูลผู้ป่วยในระบบ', 'px-5 py-10 text-center text-slate-500');
+          empty.colSpan = 7;
+          const row = document.createElement('tr');
+          row.append(empty);
+          tbody.append(row);
           return;
         }
-
-        patients.forEach(patient => {
-          const { riskBadge, actionButton } = evaluateUACRRisk(patient.uacr);
-
-          const row = `
-            <tr class="hover:bg-slate-50 transition">
-              <td class="px-6 py-4 font-medium text-slate-900">#${patient.patient_id}</td>
-              <td class="px-6 py-4">${patient.name} <span class="text-xs text-slate-400 block">อายุ ${patient.age} ปี</span></td>
-              <td class="px-6 py-4">${patient.blood_sugar}</td>
-              <td class="px-6 py-4">${patient.blood_pressure}</td>
-              <td class="px-6 py-4 font-semibold text-slate-700">${patient.uacr}</td>
-              <td class="px-6 py-4">${riskBadge}</td>
-              <td class="px-6 py-4 text-center">
-                <div class="flex flex-col gap-2">
-                  <!-- 🌟 ปุ่ม AI Twin (ส่งชื่อและอายุไปหน้าจำลอง) 🌟 -->
-                  <a href="kidney-twin.html?name=${patient.name}&age=${patient.age}&risk=${patient.uacr}" 
-                     class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-md shadow-cyan-500/30 transition-all flex justify-center items-center gap-1">
-                     🧬 เปิด AI Twin
-                  </a>
-                  
-                  ${actionButton}
-                  
-                  <button onclick="deletePatient('${patient.patient_id}')" class="text-red-500 hover:text-red-700 text-xs underline transition mt-1">
-                    ลบออกจากคิว
-                  </button>
-                </div>
-              </td>
-            </tr>
-          `;
-          tbody.innerHTML += row;
-        });
-
-      } catch (err) {
-        console.error('Error fetching queue:', err);
+        patients.forEach((patient) => tbody.append(renderPatient(patient)));
+      } catch (error) {
+        const message = createCell(error.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'px-5 py-10 text-center text-rose-700');
+        message.colSpan = 7;
+        const row = document.createElement('tr');
+        row.append(message);
+        tbody.replaceChildren(row);
       }
     }
 
-    // ฟังก์ชันลบข้อมูลคนไข้
     async function deletePatient(id) {
-      const isConfirm = confirm(`คุณต้องการลบข้อมูลคนไข้รหัส #${id} ออกจากระบบใช่หรือไม่?`);
-      if (!isConfirm) return;
-
+      if (!confirm(`ต้องการลบข้อมูลคนไข้รหัส #${id} ใช่หรือไม่?`)) return;
       try {
-        const res = await fetch(`${API_BASE}/patients/${id}`, {
-          method: 'DELETE'
-        });
-
-        // ดึงข้อความ Error จริงๆ จากฐานข้อมูลมาอ่าน
-        const data = await res.json();
-
-        if (res.ok) {
-          // ถ้าสำเร็จ โหลดคิวใหม่
-          loadQueue(); 
-        } else {
-          // ถ้าลบไม่สำเร็จ ให้โชว์สาเหตุที่แท้จริง
-          alert(`ลบไม่สำเร็จ สาเหตุ: ${data.error}`);
-        }
-      } catch (err) {
-        console.error(err);
-        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+        const response = await fetch(`${API_BASE}/patients/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'ลบข้อมูลไม่สำเร็จ');
+        await loadQueue();
+      } catch (error) {
+        alert(error.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
       }
     }
 
     loadQueue();
   </script>
-  
 </body>
 </html>

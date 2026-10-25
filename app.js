@@ -1,117 +1,109 @@
 const API_BASE = 'http://localhost:9999/api';
 let currentPatientId = null;
 
-// 1. ส่งข้อมูลลงทะเบียนคนไข้
-document.getElementById('patientForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const status = document.getElementById('patientStatus');
-    status.className = 'mt-3 text-sm text-slate-500';
-    status.innerText = 'กำลังบันทึกข้อมูล...';
+const statusClasses = {
+  neutral: 'mt-3 text-sm font-medium text-slate-500',
+  success: 'mt-3 text-sm font-medium text-emerald-700',
+  error: 'mt-3 text-sm font-medium text-rose-700'
+};
 
-    const payload = {
-        name: document.getElementById('name').value,
-        age: parseInt(document.getElementById('age').value),
-        weight: parseFloat(document.getElementById('weight').value),
-        disease: document.getElementById('disease').value,
-        fund: document.getElementById('fund').value
-    };
+function setStatus(element, message, type = 'neutral') {
+  element.className = statusClasses[type];
+  element.textContent = message;
+}
 
-    try {
-        const res = await fetch(`${API_BASE}/add-patient`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+async function requestJson(url, options) {
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'คำขอไม่สำเร็จ');
+  return data;
+}
+
+function setSubmitting(form, isSubmitting) {
+  const button = form.querySelector('button[type="submit"]');
+  if (button) button.disabled = isSubmitting;
+}
+
+document.getElementById('patientForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const status = document.getElementById('patientStatus');
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    age: Number(document.getElementById('age').value),
+    weight: Number(document.getElementById('weight').value),
+    disease: document.getElementById('disease').value.trim(),
+    fund: document.getElementById('fund').value.trim()
+  };
+
+  setStatus(status, 'กำลังบันทึกข้อมูล...');
+  setSubmitting(form, true);
+  try {
+    const data = await requestJson(`${API_BASE}/add-patient`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
     });
-    const data = await res.json();
-        
-    if (res.ok) {
-        currentPatientId = data.patient_id;
-        document.getElementById('screen_patient_id').value = currentPatientId;
-        status.className = 'mt-3 text-sm text-emerald-600';
-        status.innerText = `สำเร็จ: ลงทะเบียนคนไข้เรียบร้อย (Patient ID: ${currentPatientId})`;
-    } else {
-        throw new Error(data.error);
-        }
-      } catch (err) {
-        status.className = 'mt-3 text-sm text-red-500';
-        status.innerText = 'เกิดข้อผิดพลาดในการลงทะเบียน';
-      }
+    currentPatientId = data.patient_id;
+    document.getElementById('screen_patient_id').value = currentPatientId;
+    setStatus(status, `ลงทะเบียนสำเร็จ (Patient ID: ${currentPatientId})`, 'success');
+  } catch (error) {
+    setStatus(status, error.message || 'เกิดข้อผิดพลาดในการลงทะเบียน', 'error');
+  } finally {
+    setSubmitting(form, false);
+  }
 });
 
-    // 2. ส่งข้อมูลผลการตรวจสุขภาพ
-document.getElementById('screeningForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const status = document.getElementById('screeningStatus');
-      
-    if (!currentPatientId) {
-        status.className = 'mt-3 text-sm text-red-500';
-        status.innerText = 'กรุณาลงทะเบียนคนไข้ในขั้นตอนที่ 1 ก่อน';
-        return;
-    }
+document.getElementById('screeningForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const status = document.getElementById('screeningStatus');
+  if (!currentPatientId) {
+    setStatus(status, 'กรุณาลงทะเบียนคนไข้ในขั้นตอนที่ 1 ก่อน', 'error');
+    return;
+  }
 
-    status.className = 'mt-3 text-sm text-slate-500';
-    status.innerText = 'กำลังบันทึกผลตรวจ...';
-
-    const payload = {
-        patient_id: currentPatientId,
-        blood_sugar: parseFloat(document.getElementById('blood_sugar').value),
-        blood_pressure: document.getElementById('blood_pressure').value,
-        qcard_risk: document.getElementById('qcard_risk').value
-    };
-
-    try {
-        const res = await fetch(`${API_BASE}/add-screening`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+  const payload = {
+    patient_id: currentPatientId,
+    blood_sugar: Number(document.getElementById('blood_sugar').value),
+    blood_pressure: document.getElementById('blood_pressure').value.trim(),
+    qcard_risk: Number(document.getElementById('qcard_risk').value)
+  };
+  setStatus(status, 'กำลังบันทึกผลตรวจ...');
+  setSubmitting(form, true);
+  try {
+    await requestJson(`${API_BASE}/add-screening`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
     });
-    const data = await res.json();
-
-    if (res.ok) {
-        status.className = 'mt-3 text-sm text-emerald-600';
-        status.innerText = 'สำเร็จ: บันทึกข้อมูลผลตรวจสุขภาพเรียบร้อย';
-    } else {
-        throw new Error(data.error);
-    }
-    } catch (err) {
-        status.className = 'mt-3 text-sm text-red-500';
-        status.innerText = 'เกิดข้อผิดพลาดในการบันทึกผลตรวจ';
-    }
+    setStatus(status, 'บันทึกผลตรวจเรียบร้อย', 'success');
+  } catch (error) {
+    setStatus(status, error.message || 'เกิดข้อผิดพลาดในการบันทึกผลตรวจ', 'error');
+  } finally {
+    setSubmitting(form, false);
+  }
 });
 
-    // 3. กดส่งให้ AI วิเคราะห์
-document.getElementById('analyzeBtn').addEventListener('click', async () => {
-    const container = document.getElementById('aiResultContainer');
-    const text = document.getElementById('aiResultText');
-    const btn = document.getElementById('analyzeBtn');
-
-    if (!currentPatientId) {
-        alert('กรุณาลงทะเบียนและบันทึกผลตรวจคนไข้ก่อนกดวิเคราะห์');
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = 'กำลังรอ AI ประมวลผล...';
+document.getElementById('analyzeBtn').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  const container = document.getElementById('aiResultContainer');
+  const resultText = document.getElementById('aiResultText');
+  if (!currentPatientId) {
     container.classList.remove('hidden');
-    text.innerText = 'ระบบกำลังส่งข้อมูลตรวจล่าสุดไปยังโมเดล AI กรุณารอสักครู่...';
+    resultText.textContent = 'กรุณาลงทะเบียนและบันทึกผลตรวจก่อนเริ่มวิเคราะห์';
+    return;
+  }
 
-    try {
-        const res = await fetch(`${API_BASE}/analyze`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ patient_id: currentPatientId })
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-            text.innerText = data.ai_recommendation.replace(/[*#]/g, '');
-        } else {
-          text.innerText = `เกิดข้อผิดพลาด: ${data.error || 'ไม่สามารถวิเคราะห์ได้'}`;
-        }
-    } catch (err) {
-        text.innerText = 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์หลังบ้านได้';
-    } finally {
-        btn.disabled = false;
-        btn.innerText = 'เริ่มการวิเคราะห์ด้วย AI';
-      }
+  button.disabled = true;
+  button.textContent = 'กำลังวิเคราะห์...';
+  container.classList.remove('hidden');
+  resultText.textContent = 'ระบบกำลังประมวลผล กรุณารอสักครู่...';
+  try {
+    const data = await requestJson(`${API_BASE}/analyze`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ patient_id: currentPatientId })
+    });
+    resultText.textContent = (data.ai_recommendation || '').replace(/[*#]/g, '');
+  } catch (error) {
+    resultText.textContent = error.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'เริ่มการวิเคราะห์ด้วย AI';
+  }
 });

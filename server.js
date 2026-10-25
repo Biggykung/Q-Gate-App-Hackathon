@@ -1,160 +1,168 @@
 require('dotenv').config();
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const express = require('express');
+const path = require('path');
 const mysql = require('mysql2');
 const cors = require('cors');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-app.use(cors());
-app.use(express.json()); // อนุญาตให้รับส่งข้อมูลเป็น JSON
+const PORT = Number(process.env.PORT) || 9999;
+const aiClient = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  : null;
 
-// 1. ตั้งค่าการเชื่อมต่อฐานข้อมูล MySQL
+app.use(cors());
+app.use(express.json());
+
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',      
-  password: '@Biggyggez123',      
-  database: 'health_gate' 
+  host: process.env.DB_HOST || 'localhost',
+  port: Number(process.env.DB_PORT) || 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'health_gate'
 });
 
-// 2. สั่งให้เชื่อมต่อ
-db.connect((err) => {
-  if (err) {
-    console.error('เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล:', err);
+db.connect((error) => {
+  if (error) {
+    console.error('เชื่อมต่อฐานข้อมูลไม่สำเร็จ:', error.message);
     return;
   }
-  console.log('✅ เชื่อมต่อฐานข้อมูล health_gate สำเร็จแล้ว!');
+  console.log(`เชื่อมต่อฐานข้อมูล ${process.env.DB_NAME || 'health_gate'} สำเร็จ`);
 });
 
-// 3. สร้าง API จำลองสำหรับทดสอบว่าเซิร์ฟเวอร์ทำงานปกติ
-app.get('/api/test', (req, res) => {
+function isPositiveNumber(value) {
+  return Number.isFinite(Number(value)) && Number(value) > 0;
+}
+
+app.get('/api/test', (_req, res) => {
   res.json({ message: 'Backend พร้อมทำงานแล้ว!' });
 });
 
-// ==========================================
-// API ที่ 1: ลงทะเบียนคนไข้ใหม่ (ลงตาราง patients)
-// ==========================================
 app.post('/api/add-patient', (req, res) => {
-  const { name, age, weight, disease, fund } = req.body; 
+  const { name, age, weight, disease = '', fund } = req.body;
+  if (typeof name !== 'string' || !name.trim() || !isPositiveNumber(age) || !isPositiveNumber(weight) || typeof fund !== 'string' || !fund.trim()) {
+    return res.status(400).json({ error: 'กรุณากรอกชื่อ อายุ น้ำหนัก และสิทธิการรักษาให้ครบถ้วน' });
+  }
 
-  const sql = `INSERT INTO patients (Patient_name, Patient_age, Patient_weight, underlying_disease, health_fund) 
+  const sql = `INSERT INTO patients (Patient_name, Patient_age, Patient_weight, underlying_disease, health_fund)
                VALUES (?, ?, ?, ?, ?)`;
-
-  db.query(sql, [name, age, weight, disease, fund], (err, result) => {
-    if (err) {
-      console.error('Error inserting patient:', err);
-      return res.status(500).json({ error: 'บันทึกข้อมูลคนไข้ล้มเหลว' });
+  db.query(sql, [name.trim(), Number(age), Number(weight), String(disease).trim(), fund.trim()], (error, result) => {
+    if (error) {
+      console.error('Error inserting patient:', error.message);
+      return res.status(500).json({ error: 'บันทึกข้อมูลคนไข้ไม่สำเร็จ' });
     }
-    res.json({ 
-      message: 'ลงทะเบียนคนไข้สำเร็จ!', 
-      patient_id: result.insertId 
-    });
+    res.status(201).json({ message: 'ลงทะเบียนคนไข้สำเร็จ', patient_id: result.insertId });
   });
 });
 
-// ==========================================
-// API ที่ 2: บันทึกผลตรวจสุขภาพ (ลงตาราง health_screening)
-// ==========================================
 app.post('/api/add-screening', (req, res) => {
   const { patient_id, blood_sugar, blood_pressure, qcard_risk } = req.body;
+  if (!isPositiveNumber(patient_id) || !isPositiveNumber(blood_sugar) || typeof blood_pressure !== 'string' || !blood_pressure.trim() || !Number.isFinite(Number(qcard_risk)) || Number(qcard_risk) < 0) {
+    return res.status(400).json({ error: 'กรุณาตรวจสอบข้อมูลผลตรวจให้ถูกต้อง' });
+  }
 
-  const sql = `INSERT INTO health_screening (patient_id, blood_sugar, blood_pressure, qcard_uacr_risk) 
+  const sql = `INSERT INTO health_screening (patient_id, blood_sugar, blood_pressure, qcard_uacr_risk)
                VALUES (?, ?, ?, ?)`;
-
-  db.query(sql, [patient_id, blood_sugar, blood_pressure, qcard_risk], (err, result) => {
-    if (err) {
-      console.error('Error inserting screening:', err);
-      return res.status(500).json({ error: 'บันทึกผลตรวจล้มเหลว' });
+  db.query(sql, [Number(patient_id), Number(blood_sugar), blood_pressure.trim(), Number(qcard_risk)], (error) => {
+    if (error) {
+      console.error('Error inserting screening:', error.message);
+      return res.status(500).json({ error: 'บันทึกผลตรวจไม่สำเร็จ' });
     }
-    res.json({ message: 'บันทึกผลตรวจสุขภาพสำเร็จ!' });
+    res.status(201).json({ message: 'บันทึกผลตรวจสุขภาพสำเร็จ' });
   });
 });
 
-// ==========================================
-// API ที่ 3: วิเคราะห์สุขภาพด้วย AI (ลงตาราง ai_recommendations)
-// ==========================================
-app.post('/api/analyze', (req, res) => {
+app.post('/api/analyze', async (req, res) => {
   const { patient_id } = req.body;
+  if (!isPositiveNumber(patient_id)) return res.status(400).json({ error: 'รหัสคนไข้ไม่ถูกต้อง' });
+  if (!aiClient) return res.status(503).json({ error: 'ยังไม่ได้ตั้งค่า GEMINI_API_KEY' });
 
-  const fetchSql = `SELECT * FROM health_screening WHERE patient_id = ? ORDER BY created_at DESC LIMIT 1`;
-  
-  db.query(fetchSql, [patient_id], async (err, results) => {
-    if (err) return res.status(500).json({ error: 'ค้นหาข้อมูลล้มเหลว' });
-    if (results.length === 0) return res.status(404).json({ error: 'ไม่พบประวัติผลตรวจของคนไข้รายนี้' });
+  db.query('SELECT * FROM health_screening WHERE patient_id = ? ORDER BY created_at DESC LIMIT 1', [Number(patient_id)], async (error, results) => {
+    if (error) {
+      console.error('Error loading screening:', error.message);
+      return res.status(500).json({ error: 'ค้นหาผลตรวจไม่สำเร็จ' });
+    }
+    if (results.length === 0) return res.status(404).json({ error: 'ไม่พบผลตรวจของคนไข้รายนี้' });
 
     const data = results[0];
-    const prompt = `คุณคือผู้เชี่ยวชาญด้านสุขภาพ (Quantum Quest Health Gate) 
-    โปรดวิเคราะห์ความเสี่ยงและให้คำแนะนำสั้นๆ 3 ข้อ เป็นภาษาไทย สำหรับคนไข้ที่มีข้อมูลดังนี้:
-    - ระดับน้ำตาลในเลือด: ${data.blood_sugar} mg/dL
-    - ความดันโลหิต: ${data.blood_pressure}
-    - ความเสี่ยงโรคไต (UACR จาก Q-Card): ${data.qcard_uacr_risk}`;
+    const prompt = `คุณเป็นผู้ช่วยให้ข้อมูลสุขภาพเบื้องต้น ไม่ใช่แพทย์ โปรดให้คำแนะนำภาษาไทย 3 ข้อ โดยระบุว่าควรปรึกษาบุคลากรทางการแพทย์และห้ามวินิจฉัยโรค จากข้อมูลนี้:\n- ระดับน้ำตาลในเลือด: ${data.blood_sugar} mg/dL\n- ความดันโลหิต: ${data.blood_pressure}\n- ค่า UACR: ${data.qcard_uacr_risk} mg/g`;
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
-      const aiResult = await model.generateContent(prompt);
-      const ai_text = aiResult.response.text();
-
-      const insertSql = `INSERT INTO ai_recommendations (patient_id, ai_module, ai_response_text) VALUES (?, ?, ?)`;
-      
-      db.query(insertSql, [patient_id, 'Q-Card Risk Analysis', ai_text], (err2, result2) => {
-        if (err2) return res.status(500).json({ error: 'บันทึกคำแนะนำ AI ล้มเหลว' });
-        res.json({ message: 'วิเคราะห์สำเร็จ!', ai_recommendation: ai_text });
-      });
-
+      const model = aiClient.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite' });
+      const result = await model.generateContent(prompt);
+      const recommendation = result.response.text();
+      db.query('INSERT INTO ai_recommendations (patient_id, ai_module, ai_response_text) VALUES (?, ?, ?)',
+        [Number(patient_id), 'Q-Card Risk Analysis', recommendation], (saveError) => {
+          if (saveError) {
+            console.error('Error saving AI recommendation:', saveError.message);
+            return res.status(500).json({ error: 'บันทึกคำแนะนำไม่สำเร็จ' });
+          }
+          res.json({ message: 'วิเคราะห์สำเร็จ', ai_recommendation: recommendation });
+        });
     } catch (aiError) {
-      console.error(aiError);
-      res.status(500).json({ error: 'การวิเคราะห์ AI มีปัญหา' });
+      console.error('AI analysis error:', aiError.message);
+      res.status(502).json({ error: 'ระบบวิเคราะห์ AI ขัดข้อง กรุณาลองอีกครั้ง' });
     }
   });
 });
 
-// 4. API สำหรับหน้า Dashboard ดึงข้อมูลคิวส่งต่อ (Referral Queue)
-app.get('/api/patients-queue', (req, res) => {
-  // ดึงข้อมูลคนไข้เชื่อมกับผลตรวจ เรียงลำดับความเสี่ยง UACR จากมากไปน้อย (เอาเคสหนักสุดขึ้นก่อน)
+app.get('/api/patients-queue', (_req, res) => {
   const sql = `
-    SELECT 
-      p.Patient_id AS patient_id, 
-      p.Patient_name AS name, 
-      p.Patient_age AS age,
-      s.blood_sugar, 
-      s.blood_pressure, 
-      s.qcard_uacr_risk AS uacr
+    SELECT p.Patient_id AS patient_id, p.Patient_name AS name, p.Patient_age AS age,
+           s.blood_sugar, s.blood_pressure, s.qcard_uacr_risk AS uacr
     FROM patients p
     JOIN health_screening s ON p.Patient_id = s.patient_id
-    ORDER BY s.qcard_uacr_risk DESC;
-  `;
-  
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+    ORDER BY s.qcard_uacr_risk DESC`;
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error loading queue:', error.message);
+      return res.status(500).json({ error: 'โหลดคิวผู้ป่วยไม่สำเร็จ' });
+    }
     res.json(results);
   });
 });
 
-// 5. API สำหรับลบลายชื่อคนไข้ (เคลียร์คิว)
 app.delete('/api/patients/:id', (req, res) => {
-  const patientId = req.params.id;
-  
-  // โดมิโนตัวที่ 1: ลบประวัติผลการวิเคราะห์ AI ก่อน
-  db.query('DELETE FROM ai_recommendations WHERE patient_id = ?', [patientId], (err1) => {
-    if (err1) return res.status(500).json({ error: err1.message });
-    
-    // โดมิโนตัวที่ 2: ลบผลตรวจสุขภาพตามไป
-    db.query('DELETE FROM health_screening WHERE patient_id = ?', [patientId], (err2) => {
-      if (err2) return res.status(500).json({ error: err2.message });
-      
-      // โดมิโนตัวที่ 3: ลบชื่อคนไข้ออกจากระบบ (ตอนนี้ลบได้แล้วเพราะไม่มีลูกเกาะอยู่)
-      db.query('DELETE FROM patients WHERE Patient_id = ?', [patientId], (err3) => {
-        if (err3) return res.status(500).json({ error: err3.message });
-        
-        res.json({ message: 'ลบข้อมูลสำเร็จ' });
+  const patientId = Number(req.params.id);
+  if (!Number.isInteger(patientId) || patientId <= 0) return res.status(400).json({ error: 'รหัสคนไข้ไม่ถูกต้อง' });
+
+  db.beginTransaction((transactionError) => {
+    if (transactionError) return res.status(500).json({ error: 'เริ่มลบข้อมูลไม่สำเร็จ' });
+    db.query('DELETE FROM ai_recommendations WHERE patient_id = ?', [patientId], (aiError) => {
+      if (aiError) return rollbackDelete(aiError);
+      db.query('DELETE FROM health_screening WHERE patient_id = ?', [patientId], (screeningError) => {
+        if (screeningError) return rollbackDelete(screeningError);
+        db.query('DELETE FROM patients WHERE Patient_id = ?', [patientId], (patientError, result) => {
+          if (patientError) return rollbackDelete(patientError);
+          if (result.affectedRows === 0) {
+            return db.rollback(() => res.status(404).json({ error: 'ไม่พบข้อมูลคนไข้' }));
+          }
+          db.commit((commitError) => {
+            if (commitError) return rollbackDelete(commitError);
+            res.json({ message: 'ลบข้อมูลสำเร็จ' });
+          });
+        });
       });
     });
+
+    function rollbackDelete(error) {
+      console.error('Error deleting patient:', error.message);
+      db.rollback(() => res.status(500).json({ error: 'ลบข้อมูลคนไข้ไม่สำเร็จ' }));
+    }
   });
 });
 
-// 6. เปิดพอร์ตเซิร์ฟเวอร์ (ย้ายมาไว้ล่างสุด)
-const PORT = 9999;
+const frontendFiles = new Set(['index.html', 'dashboard.html', 'kidney-twin.html', 'app.js', 'utils.js', 'styles.css']);
+
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/:file', (req, res, next) => {
+  if (!frontendFiles.has(req.params.file)) return next();
+  res.sendFile(path.join(__dirname, req.params.file));
+});
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

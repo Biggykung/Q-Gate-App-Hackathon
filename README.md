@@ -1,37 +1,55 @@
 # KID-Q Health Screening
 
-เว็บแอปคัดกรองสุขภาพเบื้องต้นสำหรับบุคลากรทางการแพทย์ ครอบคลุมการลงทะเบียนผู้ป่วย บันทึกผลตรวจ UACR และติดตามคิวบนแดชบอร์ด
+KID-Q is a basic health-screening web app for patient registration, recording UACR results, and managing follow-up queues.
 
-## คุณสมบัติ
+## Features
 
-- ลงทะเบียนผู้ป่วยและบันทึกผลตรวจสุขภาพ
-- จัดหมวดความเสี่ยง UACR เป็น A1, A2 และ A3
-- จัดลำดับและติดตามรายการผู้ป่วยผ่านแดชบอร์ด
-- หน้า Kidney Twin สำหรับทดลองปรับพฤติกรรมด้วยสถานการณ์จำลอง ตัวเลขเป็นตัวอย่างเพื่อการเรียนรู้ ไม่ใช่การพยากรณ์หรือวินิจฉัยทางการแพทย์
-- ใช้ Google Gemini เพื่อสรุปข้อมูลสุขภาพเบื้องต้น
+- Register patients and record health-screening results.
+- Categorize UACR results as A1, A2, or A3.
+- Review and prioritize patients in the referral dashboard.
+- Explore the Kidney Twin lifestyle simulation. Its values are illustrative and are not medical predictions.
+- Generate preliminary health information with the Google Gemini API.
 
-## เครื่องมือที่ใช้
+## Technology
 
-- HTML, Tailwind CSS และ JavaScript
-- Node.js, Express และ MySQL
+- HTML, Tailwind CSS, and JavaScript
+- Node.js and Express
+- MySQL
 - Google Gemini API
 
-## เริ่มใช้งาน
+## Getting Started
 
-1. ติดตั้ง Node.js และ MySQL
-2. ติดตั้ง dependencies ด้วย `npm install`
-3. ตั้งค่าตัวแปรใน `.env` ตาม `.env.example` หากมี `.env` อยู่แล้ว ให้เก็บ `GEMINI_API_KEY` เดิมไว้และเพิ่มค่าฐานข้อมูล
-4. เตรียมฐานข้อมูล `health_gate` และตารางที่ API ใช้งาน: `patients`, `health_screening` และ `ai_recommendations`
-5. เริ่มระบบด้วย `npm start`
-6. เปิด `http://localhost:9999/` ในเบราว์เซอร์
+### Requirements
 
-ตัวแปรที่ต้องตั้งใน `.env`: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` และ `GEMINI_API_KEY` ค่าลับไม่ควรใส่ในซอร์สโค้ดหรือ commit ขึ้น Git
+- Node.js
+- MySQL
+- A Google Gemini API key for AI recommendations
 
-## หน้าหลัก
+### Setup
 
-- `index.html` — ลงทะเบียนและบันทึกผลตรวจ
-- `dashboard.html` — แสดงคิวและจัดหมวด UACR
-- `kidney-twin.html` — สถานการณ์จำลองเพื่อการเรียนรู้
-- `server.js` — REST API และการเชื่อมต่อฐานข้อมูล
+1. Install the dependencies:
 
-> ระบบนี้เป็นเครื่องมือคัดกรองเบื้องต้น ไม่ใช่เครื่องมือวินิจฉัย การตัดสินใจรักษาควรทำโดยบุคลากรทางการแพทย์และอ้างอิงผลตรวจยืนยัน
+   ```bash
+   npm install
+   ```
+
+2. Configure the environment variables in `.env` using `.env.example` as a reference. If `.env` already exists, keep its current `GEMINI_API_KEY` and add the database settings.
+3. Create the `health_gate` database and the tables used by the API: `patients`, `health_screening`, and `ai_recommendations`.
+4. Start the backend:
+
+   ```bash
+   npm start
+   ```
+
+5. Open [http://localhost:9999/](http://localhost:9999/) in your browser.
+
+The required environment variables are `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `GEMINI_API_KEY`. Keep real credentials in `.env`; do not commit them to Git.
+
+## Main Pages
+
+- `index.html` — Register patients and record screening results.
+- `dashboard.html` — Review the patient queue and UACR categories.
+- `kidney-twin.html` — Explore the educational lifestyle simulation.
+- `server.js` — REST API and database connection.
+
+> KID-Q is a screening aid, not a diagnostic tool. Treatment decisions should be made by qualified healthcare professionals using confirmed test results.

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#064e3b">
+  <title>เข้าสู่ระบบ | KID-Q</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="auth.js?v=6"></script>
+</head>
+<body class="site-background min-h-screen px-4 py-12 text-slate-800">
+  <main class="mx-auto mt-12 max-w-md rounded-3xl border border-soft surface-soft p-8 shadow-xl">
+    <p class="text-sm font-semibold tracking-wide text-emerald-800">KID-Q · HEALTH SCREENING</p>
+    <h1 class="mt-2 text-2xl font-bold text-slate-900">เข้าสู่ระบบ</h1>
+    <p class="mt-2 text-sm text-slate-600">เข้าสู่ระบบด้วยบัญชี KID-Q ของคุณ</p>
+    <form id="loginForm" class="mt-6 space-y-4">
+      <div>
+        <label for="username" class="mb-1 block text-sm font-medium text-slate-700">ชื่อผู้ใช้</label>
+        <input id="username" name="username" autocomplete="username" required class="form-field w-full rounded-lg border border-field px-3 py-2.5 text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+      </div>
+      <div>
+        <label for="password" class="mb-1 block text-sm font-medium text-slate-700">รหัสผ่าน</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required class="form-field w-full rounded-lg border border-field px-3 py-2.5 text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+      </div>
+      <p id="loginMessage" class="min-h-5 text-sm text-rose-700" role="status" aria-live="polite"></p>
+      <button type="submit" class="w-full rounded-lg bg-emerald-700 px-4 py-3 font-semibold text-white transition hover:bg-emerald-800">เข้าสู่ระบบ</button>
+    </form>
+    <p class="mt-6 text-center text-sm text-slate-600">ยังไม่มีบัญชี? <a href="register.html" class="font-semibold text-emerald-800 hover:text-emerald-950">สมัครสมาชิก</a></p>
+  </main>
+</body>
+</html>

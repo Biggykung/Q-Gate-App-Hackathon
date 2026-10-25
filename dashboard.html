@@ -6,7 +6,8 @@
   <meta name="theme-color" content="#064e3b">
   <title>Referral Dashboard | KID-Q</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="auth.js?v=6"></script>
 </head>
 <body class="min-h-screen site-background p-4 text-slate-800 sm:p-6">
   <main class="mx-auto max-w-6xl space-y-6">
@@ -16,7 +17,10 @@
         <h1 class="mt-1 text-2xl font-bold tracking-tight">คิวติดตามผลตรวจ</h1>
         <p class="mt-1 text-sm text-emerald-100">จัดลำดับและติดตามผู้ป่วยตามค่า UACR</p>
       </div>
-      <a href="index.html" class="inline-flex items-center justify-center rounded-lg surface-soft px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50">+ คัดกรองเคสใหม่</a>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="index.html" class="inline-flex items-center justify-center rounded-lg surface-soft px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50">+ คัดกรองเคสใหม่</a>
+        <button id="logoutButton" type="button" class="rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20">ออกจากระบบ</button>
+      </div>
     </header>
 
     <section class="overflow-hidden rounded-2xl border border-soft surface-soft shadow-sm" aria-labelledby="queue-heading">
@@ -52,7 +56,7 @@
 
   <script src="utils.js"></script>
   <script>
-    const API_BASE = 'http://localhost:9999/api';
+    const API_BASE = '/api';
     const tbody = document.getElementById('queueTableBody');
 
     function createCell(value, className = 'px-5 py-4') {
@@ -100,7 +104,14 @@
       deleteButton.className = 'rounded-lg px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-50';
       deleteButton.textContent = 'ลบข้อมูล';
       deleteButton.addEventListener('click', () => deletePatient(patient.patient_id));
-      actions.append(twinLink, riskActions, deleteButton);
+      const portalCodeButton = document.createElement('button');
+      portalCodeButton.type = 'button';
+      portalCodeButton.className = 'rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 transition hover:bg-emerald-100';
+      portalCodeButton.textContent = 'ออกรหัสให้คนไข้';
+      portalCodeButton.addEventListener('click', () => issuePatientPortalCode(patient.patient_id));
+      actions.append(twinLink, riskActions);
+      if (['admin', 'clinician'].includes(window.KIDQ_USER?.role)) actions.append(portalCodeButton);
+      if (window.KIDQ_USER?.role === 'admin') actions.append(deleteButton);
       actionCell.append(actions);
       row.append(actionCell);
       return row;
@@ -138,6 +149,17 @@
       }
     }
 
+    async function issuePatientPortalCode(id) {
+      try {
+        const response = await fetch(`${API_BASE}/patients/${encodeURIComponent(id)}/portal-code`, { method: 'POST' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'สร้างรหัสไม่สำเร็จ');
+        window.prompt('ส่งรหัสนี้ให้คนไข้เป็นการส่วนตัว (ใช้ได้ 30 วัน)', data.portal_code);
+      } catch (error) {
+        alert(error.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+      }
+    }
+
     async function deletePatient(id) {
       if (!confirm(`ต้องการลบข้อมูลคนไข้รหัส #${id} ใช่หรือไม่?`)) return;
       try {
@@ -150,7 +172,7 @@
       }
     }
 
-    loadQueue();
+    window.KIDQ_AUTH_READY.then((user) => { if (user) loadQueue(); });
   </script>
 </body>
 </html>

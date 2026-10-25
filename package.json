@@ -4,7 +4,16 @@
   "description": "Kidney health screening and referral dashboard",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "create-user": "node scripts/create-user.js",
+    "start": "node server.js",
+    "seed-demo": "node scripts/run-sql.js seed.sql",
+    "test": "node --test",
+    "provision-db-user": "node scripts/provision-db-user.js",
+    "setup-db": "node scripts/run-sql.js schema.sql",
+    "bootstrap-admin": "node scripts/bootstrap-admin.js",
+    "rotate-db-admin-password": "node scripts/rotate-db-admin-password.js",
+    "approve-user": "node scripts/approve-user.js",
+    "migrate-patient-portal": "node scripts/migrate-patient-portal.js"
   },
   "keywords": [],
   "author": "",

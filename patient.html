@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#064e3b">
+  <title>ผลตรวจของฉัน | KID-Q</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="auth.js?v=6"></script>
+</head>
+<body class="min-h-screen site-background px-4 py-8 text-slate-800 sm:p-6">
+  <main class="mx-auto max-w-4xl space-y-6">
+    <header class="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 p-6 text-white shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm font-medium text-emerald-100">KID-Q · HEALTH SCREENING</p>
+        <h1 class="mt-1 text-2xl font-bold tracking-tight">ผลตรวจของฉัน</h1>
+        <p class="mt-1 text-sm text-emerald-100">ข้อมูลสุขภาพและคำแนะนำสำหรับบัญชีของคุณ</p>
+      </div>
+      <button id="logoutButton" type="button" class="self-start rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20 sm:self-auto">ออกจากระบบ</button>
+    </header>
+
+    <section class="rounded-2xl border border-soft surface-soft p-6 shadow-sm">
+      <h2 id="patientName" class="text-xl font-semibold text-slate-900">กำลังโหลดข้อมูล...</h2>
+      <p id="patientAge" class="mt-1 text-sm text-slate-600"></p>
+    </section>
+
+    <section class="rounded-2xl border border-soft surface-soft p-6 shadow-sm" aria-labelledby="screeningHeading">
+      <h2 id="screeningHeading" class="text-lg font-semibold text-slate-900">ผลตรวจล่าสุด</h2>
+      <p id="screeningDate" class="mt-1 text-xs text-slate-500"></p>
+      <div id="screeningDetails" class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="text-sm text-slate-600">กำลังโหลดผลตรวจ...</p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-soft surface-soft p-6 shadow-sm" aria-labelledby="recommendationHeading">
+      <h2 id="recommendationHeading" class="text-lg font-semibold text-slate-900">คำแนะนำจาก AI</h2>
+      <p class="mt-1 text-sm text-slate-600">ข้อมูลนี้เป็นคำแนะนำเบื้องต้น ไม่ใช่การวินิจฉัยหรือแผนการรักษา</p>
+      <div id="recommendations" class="mt-4 space-y-4">
+        <p class="text-sm text-slate-600">กำลังโหลดคำแนะนำ...</p>
+      </div>
+    </section>
+
+    <aside class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+      หากมีอาการผิดปกติหรือกังวลเกี่ยวกับผลตรวจ โปรดติดต่อบุคลากรทางการแพทย์เพื่อรับคำแนะนำและการตรวจยืนยัน
+    </aside>
+  </main>
+
+  <script>
+    const screeningDetails = document.getElementById('screeningDetails');
+    const recommendations = document.getElementById('recommendations');
+
+    function detailCard(label, value) {
+      const card = document.createElement('div');
+      card.className = 'rounded-xl border border-soft bg-white/70 p-4';
+      const title = document.createElement('p');
+      title.className = 'text-xs text-slate-500';
+      title.textContent = label;
+      const result = document.createElement('p');
+      result.className = 'mt-1 font-semibold text-slate-900';
+      result.textContent = value ?? '—';
+      card.append(title, result);
+      return card;
+    }
+
+    function displayDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('th-TH');
+    }
+
+    async function loadPatientPortal() {
+      try {
+        const response = await fetch('/api/patient/me', { credentials: 'same-origin' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'โหลดข้อมูลไม่สำเร็จ');
+
+        document.getElementById('patientName').textContent = data.patient.name || 'คนไข้';
+        document.getElementById('patientAge').textContent = 'อายุ ' + (data.patient.age ?? '—') + ' ปี';
+        screeningDetails.replaceChildren();
+        if (data.screening) {
+          screeningDetails.append(
+            detailCard('น้ำตาลในเลือด', data.screening.blood_sugar == null ? '—' : data.screening.blood_sugar + ' mg/dL'),
+            detailCard('ความดันโลหิต', data.screening.blood_pressure || '—'),
+            detailCard('UACR', data.screening.uacr == null ? '—' : data.screening.uacr + ' mg/g')
+          );
+          document.getElementById('screeningDate').textContent = 'บันทึกเมื่อ ' + displayDate(data.screening.created_at);
+        } else {
+          screeningDetails.textContent = 'ยังไม่มีผลตรวจในระบบ';
+        }
+
+        recommendations.replaceChildren();
+        if (!Array.isArray(data.recommendations) || data.recommendations.length === 0) {
+          recommendations.textContent = 'ยังไม่มีคำแนะนำจาก AI';
+          return;
+        }
+        data.recommendations.forEach((item) => {
+          const article = document.createElement('article');
+          article.className = 'rounded-xl border border-soft bg-white/70 p-4';
+          const date = document.createElement('p');
+          date.className = 'mb-2 text-xs text-slate-500';
+          date.textContent = displayDate(item.created_at);
+          const text = document.createElement('p');
+          text.className = 'whitespace-pre-line text-sm leading-6 text-slate-700';
+          text.textContent = item.ai_response_text;
+          article.append(date, text);
+          recommendations.append(article);
+        });
+      } catch (error) {
+        document.getElementById('patientName').textContent = 'ไม่สามารถโหลดข้อมูลได้';
+        document.getElementById('patientAge').textContent = error.message || 'กรุณาลองใหม่ภายหลัง';
+        screeningDetails.replaceChildren();
+        recommendations.replaceChildren();
+      }
+    }
+
+    window.KIDQ_AUTH_READY.then((user) => { if (user?.role === 'patient') loadPatientPortal(); });
+  </script>
+</body>
+</html>
